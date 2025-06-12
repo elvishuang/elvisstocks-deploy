@@ -1,0 +1,30 @@
+name: 每日更新 AI JSON
+
+on:
+  schedule:
+    - cron: "0 23 * * *"  # 每日 UTC 23:00（台灣時間早上 7:00）
+  workflow_dispatch:
+
+jobs:
+  update-ai-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Generate ai.json with live quotes and technical analysis
+        run: |
+          node generate-ai-json.js
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add ai.json
+          git commit -m "🤖 每日自動更新 ai.json (含技術分析)"
+          git push
